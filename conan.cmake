@@ -497,21 +497,23 @@ macro(conan_check)
     if(NOT CONAN_CMD AND CONAN_REQUIRED)
         message(FATAL_ERROR "Conan executable not found!")
     endif()
-    message(STATUS "Conan: Found program ${CONAN_CMD}")
-    execute_process(COMMAND ${CONAN_CMD} --version
-                    OUTPUT_VARIABLE CONAN_VERSION_OUTPUT
-                    ERROR_VARIABLE CONAN_VERSION_OUTPUT)
-    message(STATUS "Conan: Version found ${CONAN_VERSION_OUTPUT}")
+    if (CONAN_CMD)
+        message(STATUS "Conan: Found program ${CONAN_CMD}")
+        execute_process(COMMAND ${CONAN_CMD} --version
+                        OUTPUT_VARIABLE CONAN_VERSION_OUTPUT
+                        ERROR_VARIABLE CONAN_VERSION_OUTPUT)
+        message(STATUS "Conan: Version found ${CONAN_VERSION_OUTPUT}")
 
-    if(DEFINED CONAN_VERSION)
-        string(REGEX MATCH ".*Conan version ([0-9]+\.[0-9]+\.[0-9]+)" FOO
-            "${CONAN_VERSION_OUTPUT}")
-        if(${CMAKE_MATCH_1} VERSION_LESS ${CONAN_VERSION})
-            message(FATAL_ERROR "Conan outdated. Installed: ${CONAN_VERSION}, \
-                required: ${CONAN_VERSION_REQUIRED}. Consider updating via 'pip \
-                install conan --upgrade'.")
-        endif()
-    endif()
+        if(DEFINED CONAN_VERSION)
+            string(REGEX MATCH ".*Conan version ([0-9]+\.[0-9]+\.[0-9]+)" FOO
+                "${CONAN_VERSION_OUTPUT}")
+            if(${CMAKE_MATCH_1} VERSION_LESS ${CONAN_VERSION})
+                message(FATAL_ERROR "Conan outdated. Installed: ${CONAN_VERSION}, \
+                    required: ${CONAN_VERSION_REQUIRED}. Consider updating via 'pip \
+                    install conan --upgrade'.")
+            endif()
+        endif(DEFINED CONAN_VERSION)
+    endif(CONAN_CMD)
 endmacro()
 
 macro(conan_add_remote)

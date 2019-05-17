@@ -373,12 +373,15 @@ function(conan_cmake_install)
       set(OUTPUT_CONTROL OUTPUT_QUIET)
     endif()
     
+    set(return_code 1)
+    
     if (UNIX)
         execute_process(COMMAND ${conan_command} ${conan_args}
                          RESULT_VARIABLE return_code
                          OUTPUT_FILE "/dev/stdin"
                          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    else()
+    endif()         
+    if (NOT "${return_code}" STREQUAL "0")
         execute_process(COMMAND ${conan_command} ${conan_args}
                          RESULT_VARIABLE return_code
                          OUTPUT_VARIABLE conan_output
